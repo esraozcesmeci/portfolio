@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esra Özçeşmeci's Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <h1>Esra Özçeşmeci's Portfolio</h1>
+      <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+    </div>
+    <div role="search">
+      <label for="search-input">Search links</label>
+      <input id="search-input" type="search" placeholder="Search by title or description…">
+    </div>
+    <fieldset role="radiogroup" aria-label="Filter by category">
+      <legend class="visually-hidden">Category</legend>
+      <label><input type="radio" name="category" value="all" checked> All</label>
+      <label><input type="radio" name="category" value="video"> Videos</label>
+      <label><input type="radio" name="category" value="news"> News/Articles</label>
+    </fieldset>
+  </header>
+  <main>
+    <div id="link-list" role="list" aria-label="Link previews"></div>
+    <p id="no-results" hidden>No links match your search.</p>
+  </main>
+  <script src="app.js" defer></script>
+</body>
+</html>

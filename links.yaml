@@ -1,0 +1,174 @@
+# =============================================================================
+# Link Directory — Curated Links
+# =============================================================================
+#
+# This file contains all the links displayed on the Link Directory website.
+# Each link is a list item starting with a dash (-).
+#
+# HOW TO ADD A LINK:
+#   Simply add a new entry with the URL. The build script will automatically
+#   fetch the title, description, and image from the page.
+#
+#   - url: "https://example.com/my-article"
+#
+# OPTIONAL FIELDS:
+#   You can override any of the auto-fetched fields:
+#
+#   - url: "https://example.com/my-article"
+#     type: "news"            # "video" or "news" (auto-detected if omitted)
+#     title: "My Custom Title"
+#     description: "A short description of the link"
+#     image: "https://example.com/image.jpg"
+#
+# CATEGORIES:
+#   type: "video"  — YouTube, Vimeo, Dailymotion links (auto-detected)
+#   type: "news"   — Articles, press releases, stories (default)
+#
+# TIPS:
+#   - Lines starting with # are comments and are ignored
+#   - Keep one link per entry
+#   - Order matters — links appear on the site in the same order as here
+# =============================================================================
+
+- url: https://youtu.be/6CMgFrcQYL8?si=2Sj-KzzKu3qqxZqe
+  type: video
+- url: https://youtu.be/Q_0D5nIP4Kk?si=q_U70EqxuiC4WxYI
+  type: video
+- url: https://youtu.be/7UzWwidsTwM?si=AqCd16a8s4kMO4DT
+  type: video
+- url: https://youtu.be/rZ1tBVvb9s4?si=I7xkLa-Lb_agYzx1
+  type: video
+- url: https://youtu.be/Xbs_R8nd-u8?si=lbuYYXL62RxdfqKt
+  type: video
+- url: https://youtu.be/ttTYTi3cQ04?si=D45jPz4eNmg5z539
+  type: video
+- url: https://youtu.be/Vk_eBlh4_dM?si=MCaxDw72DERWqNzJ
+  type: video
+- url: https://youtu.be/2abNOhmitQI?si=tgEb8fnsU5k64E7p
+  type: video
+- url: https://youtu.be/Nd_Bq4MNFDM?si=3qLy_FjD9N6V6NU_
+  type: video
+- url: https://youtu.be/OPhjDUQvrDo?si=Y3rdqmYpgPlI8Rdf
+  type: video
+- url: https://youtu.be/b9hCjF3jYy8?si=N8-NL_2qt8RnKcO-
+  type: video
+- url: https://youtu.be/ZOHi_beB0GM?si=bDFmTq5AUB7UD4Vr
+  type: video
+- url: https://youtu.be/h1zLajnjvVs?si=fWkc3RyOJjoQem3f
+  type: video
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/pressreleases/2021/10/MBT-Launch.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/pressreleases/2021/12/kadin-kooperatifleri-gelistirme-kampi.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/11/TRP-in-last-4yrs.html
+  type: news
+- url: https://undpturkiye.exposure.co/supportingentrepreneurshipforsustainabledevelopment
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/pressreleases/2021/07/Mervesehir-HEM.html
+  type: news
+- url: https://undpturkiye.exposure.co/undp-turkey-supports-naturefriendly-entrepreneurship
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/04/Syrian-and-host-community-women-meet-at-demo-day.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/07/Suriyeli-isletmeleri-desteklemek-potansiyeli-aciga-cikarmak.html
+  type: news
+- url: https://undpturkiye.exposure.co/louisavintongaziantepfieldtrip
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/pressreleases/2021/03/Hatay-atik-su-tesisi.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/03/ogren-donus-basladi.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/07/izmir-welcomes-UNDP-turkey-resident-representative.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/07/serbest-calisma-platformu-dukkan-kuruldu.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/01/izmir-vocational-trainings.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/06/is-yerinde-temel-beceriler.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/06/goc-konulu-fotograf-yarismasi.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2021/03/SCRRP-toplumsal-cinsiyet-esitligi.html
+  type: news
+- url: https://www.tr.undp.org/content/turkey/en/home/presscenter/articles/2022/02/kadin-kooperativleri-ve-kadinlar-gucleniyor.html
+  type: news
+- url: https://reliefweb.int/report/turkey/how-has-undp-supported-syrians-and-host-communities-turkey-during-last-4-years
+  type: news
+- url: https://undpturkiye.exposure.co/a-powerful-force-to-accelerate-our-steps-to-achieve-a-better-world-womens-entrepreneurship
+  type: news
+- url: https://www.undp.org/turkey/press-releases/undp-boosts-business-opportunities-women-entrepreneurs
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/cool-programme-promotes-sustainable-cooling-egypt-jordan-lebanon-and-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-boosts-resilience-syrian-refugees-and-host-communities-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-and-turkish-government-fight-invasive-species-rivers-and-oceans
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/experts-join-forces-fight-marine-invasive-alien-species-turkish-seas
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-helps-women-entrepreneurs-build-better-businesses-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/turkish-diving-star-joins-undp-fight-water-pollution
+  type: news
+- url: https://www.undp.org/turkiye/news/undps-training-renewable-energy-will-further-expand-2023
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-invites-applications-renewable-energy-training
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-launches-grants-program-help-women-entrepreneurs-turkiye-recover-earthquakes
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-award-us45-million-grants-help-earthquake-hit-small-businesses
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/top-undp-official-reaffirms-support-post-earthquake-recovery-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/eu-funds-eu222-million-initiative-mobilize-local-climate-action-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-invests-women-entrepreneurs-spur-economic-recovery-after-turkiye-earthquakes
+  type: news
+- url: https://undpturkiye.exposure.co/rebuilding-lives-undps-efforts-to-prevent-violence-against-women-in-the-aftermath-of-earthquakes
+  type: news
+- url: https://undpturkiye.exposure.co/a-glance-at-2023-through-undp-turkiyes-perspective
+  type: news
+- url: https://reliefweb.int/report/turkiye/undp-launches-new-recovery-efforts-turkiye-marks-first-anniversary-devastating-earthquakes-entr
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-launches-new-recovery-efforts-turkiye-marks-first-anniversary-devastating-earthquakes
+  type: news
+- url: https://reliefweb.int/report/turkiye/legal-aid-provision-earthquake-survivors-expands-opening-new-hatay-bar-association-headquarters-entr
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-marks-international-womens-day-celebrating-womens-resilience-earthquake-recovery
+  type: news
+- url: https://reliefweb.int/report/turkiye/undp-marks-international-womens-day-celebrating-womens-resilience-earthquake-recovery-entr
+  type: news
+- url: https://undpturkiye.exposure.co/women-leading-recovery-in-the-aftermath-of-the-earthquakes
+  type: news
+- url: https://www.undp.org/turkiye/news/head-undp-reaffirms-support-post-earthquake-recovery-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/news/undp-takes-action-first-local-climate-action-plans-earthquake-region
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/rescuing-cultural-heritage-earthquake-devastation-undp-and-europa-nostra-support-turkiyes-recovery
+  type: news
+- url: https://reliefweb.int/report/turkiye/undp-builds-two-model-facilities-process-and-recycle-earthquake-debris-turkiye-entr
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-builds-two-model-facilities-process-and-recycle-earthquake-debris-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/news/undp-launches-new-initiative-strengthen-urban-waste-management-and-social-cohesion-zero-waste-approach
+  type: news
+- url: https://www.undp.org/turkiye/news/new-employment-project-roma-youth-launched-izmir
+  type: news
+- url: https://undpturkiye.exposure.co/paving-the-way-for-a-sustainable-future
+  type: news
+- url: https://undpturkiye.exposure.co/two-years-on-a-look-at-undps-earthquake-recovery-efforts-in-tuerkiye
+  type: news
+- url: https://undpturkiye.exposure.co/rebuilding-lives-after-tuerkiyes-earthquakes
+  type: news
+- url: https://www.undp.org/turkiye/news/akbank-sustainable-cooling-financing-programme-launched-istanbul
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-supports-turkiye-strengthening-its-long-term-climate-strategies
+  type: news
+- url: https://www.undp.org/turkiye/news/undp-concludes-its-project-targeting-invasive-alien-species-turkiyes-seas
+  type: news
+- url: https://www.undp.org/turkiye/news/eco-future-grant-programme-completes-informative-sessions-across-turkiye
+  type: news
+- url: https://www.undp.org/turkiye/news/local-capacity-strengthens-combating-climate-change
+  type: news
+- url: https://www.undp.org/turkiye/press-releases/undp-and-eu-strengthen-civil-societys-capacity-climate-and-biodiversity-action-turkiye
+  type: news
