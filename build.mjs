@@ -17,6 +17,8 @@ export const VIDEO_DOMAINS = [
   'dailymotion.com',
   'www.dailymotion.com',
   'dai.ly',
+  'instagram.com',
+  'www.instagram.com',
 ];
 
 // ---------------------------------------------------------------------------
