@@ -113,15 +113,28 @@ export function mergeMetadata(entry, ogData) {
 
 /**
  * Returns a fallback LinkPreview when OG fetching fails for a URL.
- * Uses the URL's hostname as the title.
+ * Generates a human-readable title from the URL path when possible.
  *
  * @param {string} url - The URL that failed to fetch
- * @returns {object} { title: hostname, description: "", image: null }
+ * @returns {object} { title, description: "", image: null }
  */
 export function applyFallback(url) {
   let title;
   try {
-    title = new URL(url).hostname;
+    const u = new URL(url);
+    // Try to extract a readable title from the last path segment
+    const segments = u.pathname.split('/').filter(Boolean);
+    const lastSegment = segments[segments.length - 1] || '';
+    // Clean up: remove file extensions, replace hyphens/underscores with spaces, title-case
+    const cleaned = lastSegment
+      .replace(/\.html?$/i, '')
+      .replace(/[-_]+/g, ' ')
+      .trim();
+    if (cleaned.length > 3) {
+      title = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    } else {
+      title = u.hostname;
+    }
   } catch {
     title = url;
   }
@@ -177,6 +190,59 @@ export function migrate(inputPath = 'linkslist.txt', outputPath = 'links.yaml') 
 }
 
 // ---------------------------------------------------------------------------
+// YouTube / oEmbed helpers
+// ---------------------------------------------------------------------------
+
+const YOUTUBE_DOMAINS = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'];
+
+/**
+ * Returns true if the URL is a YouTube link.
+ */
+function isYouTube(url) {
+  try {
+    const hostname = new URL(url).hostname;
+    return YOUTUBE_DOMAINS.includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Extracts the YouTube video ID from a URL.
+ */
+function getYouTubeId(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('/')[0];
+    return u.searchParams.get('v') || u.pathname.split('/').pop();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches metadata for a YouTube video using the noembed.com API.
+ * Returns { title, description, image } or null on failure.
+ */
+async function fetchYouTubeMetadata(url) {
+  try {
+    const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(url)}`;
+    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.error) return null;
+    const videoId = getYouTubeId(url);
+    return {
+      title: data.title || '',
+      description: data.author_name ? `By ${data.author_name}` : '',
+      image: videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (data.thumbnail_url || null),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Build
 // ---------------------------------------------------------------------------
 
@@ -227,21 +293,38 @@ export async function build(inputPath = 'links.yaml', outputPath = 'site/links-d
       entry.type = isVideoDomain(entry.url) ? 'video' : 'news';
     }
 
-    // Fetch OG metadata
+    // Fetch metadata
     let preview;
     try {
-      const { result } = await ogs({
-        url: entry.url,
-        timeout: 10000,
-        fetchOptions: {
-          headers: {
-            'user-agent': 'Mozilla/5.0 (compatible; LinkDirectory/1.0; +https://github.com)',
-            'accept': 'text/html,application/xhtml+xml',
-            'accept-language': 'en-US,en;q=0.9',
+      // Use noembed API for YouTube links (more reliable from CI)
+      if (isYouTube(entry.url)) {
+        const ytMeta = await fetchYouTubeMetadata(entry.url);
+        if (ytMeta) {
+          preview = {
+            url: entry.url,
+            type: entry.type,
+            title: entry.title ?? ytMeta.title,
+            description: entry.description ?? ytMeta.description,
+            image: entry.image ?? ytMeta.image,
+          };
+        }
+      }
+
+      // Fall back to OG scraping for non-YouTube or if YouTube API failed
+      if (!preview) {
+        const { result } = await ogs({
+          url: entry.url,
+          timeout: 10000,
+          fetchOptions: {
+            headers: {
+              'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+              'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'accept-language': 'en-US,en;q=0.9',
+            },
           },
-        },
-      });
-      preview = mergeMetadata(entry, result);
+        });
+        preview = mergeMetadata(entry, result);
+      }
     } catch {
       // OG fetch failed — apply fallback
       const fallback = applyFallback(entry.url);
