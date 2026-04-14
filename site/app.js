@@ -59,6 +59,13 @@ function createCard(link) {
   desc.textContent = link.description;
   body.appendChild(desc);
 
+  if (link.date) {
+    const date = document.createElement('div');
+    date.className = 'card-date';
+    date.textContent = link.date;
+    body.appendChild(date);
+  }
+
   card.appendChild(body);
   return card;
 }
@@ -105,7 +112,8 @@ function filterLinks() {
     const matchesSearch =
       !query ||
       link.title.toLowerCase().includes(query) ||
-      link.description.toLowerCase().includes(query);
+      link.description.toLowerCase().includes(query) ||
+      (link.date && link.date.includes(query));
     return matchesCategory && matchesSearch;
   });
 }

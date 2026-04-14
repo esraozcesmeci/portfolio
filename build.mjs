@@ -99,7 +99,7 @@ const YAML_HEADER = `# =========================================================
  * @param {object} ogData - Fetched OG data (ogTitle, ogDescription, ogImage)
  * @returns {object} LinkPreview object { url, type, title, description, image }
  */
-export function mergeMetadata(entry, ogData) {
+export function mergeMetadata(entry, ogData, html) {
   const ogImage = ogData.ogImage?.[0]?.url ?? ogData.ogImage?.url ?? null;
 
   return {
@@ -108,6 +108,7 @@ export function mergeMetadata(entry, ogData) {
     title: entry.title ?? ogData.ogTitle ?? '',
     description: entry.description ?? ogData.ogDescription ?? '',
     image: entry.image ?? ogImage,
+    date: entry.date ?? extractDate(entry.url, ogData, html) ?? null,
   };
 }
 
@@ -190,6 +191,60 @@ export function migrate(inputPath = 'linkslist.txt', outputPath = 'links.yaml') 
 }
 
 // ---------------------------------------------------------------------------
+// Date extraction
+// ---------------------------------------------------------------------------
+
+/**
+ * Attempts to extract a publication date from OG data, HTML content, or URL path.
+ * Returns an ISO date string (YYYY-MM-DD) or null.
+ */
+export function extractDate(url, ogData, html) {
+  // 1. Check OG article:published_time or og:updated_time
+  const ogDate = ogData?.articlePublishedTime
+    || ogData?.ogDate
+    || ogData?.datePublished
+    || ogData?.article?.published_time;
+  if (ogDate) {
+    const parsed = new Date(ogDate);
+    if (!isNaN(parsed)) return parsed.toISOString().slice(0, 10);
+  }
+
+  // 2. Look for common date elements in HTML (e.g. <h6 class="posted-date">)
+  if (html) {
+    const patterns = [
+      /class="posted-date"[^>]*>\s*([A-Za-z]+ \d{1,2},?\s*\d{4})\s*</i,
+      /class="date"[^>]*>\s*([A-Za-z]+ \d{1,2},?\s*\d{4})\s*</i,
+      /class="publish[_-]?date"[^>]*>\s*([A-Za-z]+ \d{1,2},?\s*\d{4})\s*</i,
+      /datetime="(\d{4}-\d{2}-\d{2})/i,
+      /"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})/i,
+    ];
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (match) {
+        const parsed = new Date(match[1]);
+        if (!isNaN(parsed)) return parsed.toISOString().slice(0, 10);
+      }
+    }
+  }
+
+  // 3. Try to extract date from URL path patterns like /2021/10/ or /2024-03/
+  try {
+    const pathname = new URL(url).pathname;
+    const match = pathname.match(/\/(\d{4})[/-](\d{2})(?:[/-](\d{2}))?/);
+    if (match) {
+      const year = parseInt(match[1]);
+      const month = parseInt(match[2]);
+      const day = match[3] ? parseInt(match[3]) : 1;
+      if (year >= 2000 && year <= 2100 && month >= 1 && month <= 12) {
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      }
+    }
+  } catch {}
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // YouTube / oEmbed helpers
 // ---------------------------------------------------------------------------
 
@@ -222,7 +277,8 @@ function getYouTubeId(url) {
 
 /**
  * Fetches metadata for a YouTube video using the noembed.com API.
- * Returns { title, description, image } or null on failure.
+ * Also fetches the video page HTML to extract the publish date.
+ * Returns { title, description, image, date } or null on failure.
  */
 async function fetchYouTubeMetadata(url) {
   try {
@@ -232,10 +288,37 @@ async function fetchYouTubeMetadata(url) {
     const data = await res.json();
     if (data.error) return null;
     const videoId = getYouTubeId(url);
+
+    // Fetch YouTube page HTML to extract publish date
+    let date = null;
+    try {
+      const pageRes = await fetch(url, {
+        headers: { 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'accept-language': 'en-US,en' },
+        signal: AbortSignal.timeout(10000),
+        redirect: 'follow',
+      });
+      const html = await pageRes.text();
+      // Look for "publishDate":{"simpleText":"17 May 2023"}
+      const dateMatch = html.match(/"publishDate"\s*:\s*\{\s*"simpleText"\s*:\s*"([^"]+)"/);
+      if (dateMatch) {
+        const parsed = new Date(dateMatch[1]);
+        if (!isNaN(parsed)) date = parsed.toISOString().slice(0, 10);
+      }
+      // Fallback: look for "dateText":{"simpleText":"..."}
+      if (!date) {
+        const dateMatch2 = html.match(/"dateText"\s*:\s*\{\s*"simpleText"\s*:\s*"([^"]+)"/);
+        if (dateMatch2) {
+          const parsed = new Date(dateMatch2[1]);
+          if (!isNaN(parsed)) date = parsed.toISOString().slice(0, 10);
+        }
+      }
+    } catch {}
+
     return {
       title: data.title || '',
       description: data.author_name ? `By ${data.author_name}` : '',
       image: videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (data.thumbnail_url || null),
+      date,
     };
   } catch {
     return null;
@@ -306,13 +389,14 @@ export async function build(inputPath = 'links.yaml', outputPath = 'site/links-d
             title: entry.title ?? ytMeta.title,
             description: entry.description ?? ytMeta.description,
             image: entry.image ?? ytMeta.image,
+            date: entry.date ?? ytMeta.date ?? null,
           };
         }
       }
 
       // Fall back to OG scraping for non-YouTube or if YouTube API failed
       if (!preview) {
-        const { result } = await ogs({
+        const { result, html } = await ogs({
           url: entry.url,
           timeout: 10000,
           fetchOptions: {
@@ -323,22 +407,51 @@ export async function build(inputPath = 'links.yaml', outputPath = 'site/links-d
             },
           },
         });
-        preview = mergeMetadata(entry, result);
+        preview = mergeMetadata(entry, result, html);
       }
     } catch {
-      // OG fetch failed — apply fallback
+      // OG fetch failed — try direct fetch for date extraction, then apply fallback
       const fallback = applyFallback(entry.url);
+      let date = entry.date ?? null;
+      if (!date) {
+        try {
+          const res = await fetch(entry.url, {
+            headers: {
+              'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+              'accept': 'text/html',
+            },
+            signal: AbortSignal.timeout(10000),
+            redirect: 'follow',
+          });
+          const html = await res.text();
+          if (html.length > 200) {
+            date = extractDate(entry.url, {}, html);
+          }
+        } catch {}
+      }
+      if (!date) {
+        date = extractDate(entry.url, {}, null);
+      }
       preview = {
         url: entry.url,
         type: entry.type,
         ...fallback,
+        date,
       };
     }
 
     results.push(preview);
   }
 
-  // 3. Ensure output directory exists and write JSON
+  // 3. Sort by date (newest first), undated entries go to the end
+  results.sort((a, b) => {
+    if (a.date && b.date) return b.date.localeCompare(a.date);
+    if (a.date) return -1;
+    if (b.date) return 1;
+    return 0;
+  });
+
+  // 4. Ensure output directory exists and write JSON
   const outputDir = path.dirname(outputPath);
   fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(results, null, 2), 'utf-8');
