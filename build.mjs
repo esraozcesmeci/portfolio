@@ -230,7 +230,17 @@ export async function build(inputPath = 'links.yaml', outputPath = 'site/links-d
     // Fetch OG metadata
     let preview;
     try {
-      const { result } = await ogs({ url: entry.url, timeout: 10000 });
+      const { result } = await ogs({
+        url: entry.url,
+        timeout: 10000,
+        fetchOptions: {
+          headers: {
+            'user-agent': 'Mozilla/5.0 (compatible; LinkDirectory/1.0; +https://github.com)',
+            'accept': 'text/html,application/xhtml+xml',
+            'accept-language': 'en-US,en;q=0.9',
+          },
+        },
+      });
       preview = mergeMetadata(entry, result);
     } catch {
       // OG fetch failed — apply fallback
