@@ -238,14 +238,23 @@ body.dark .card-date {
   align-items: center;
 }
 
+/* === Profile Photo === */
+.profile-photo {
+  width: 94px;
+  height: 94px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+
 /* === Theme Toggle === */
 #theme-toggle {
   background: none;
   border: 1px solid #ddd;
   border-radius: 50%;
-  width: 2.25rem;
-  height: 2.25rem;
-  font-size: 1.15rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
